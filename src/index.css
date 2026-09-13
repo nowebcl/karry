@@ -1,438 +1,302 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Brand colors from Kuve */
-  --bg-primary: #0A0A0A;
-  --bg-secondary: #121212;
-  --bg-tertiary: #1C1C1C;
-  --text-primary: #F3F4F6;
-  --text-secondary: #8E8E8E;
-  --text-muted: #4C4C4C;
+  /* Karry Brand Identity Palette */
+  --primary-forest: #1D4133;
+  --primary-forest-dark: #143026;
+  --primary-forest-light: #285644;
+  --accent-lime: #8EDF6F;
+  --accent-lime-hover: #7ECE5F;
+  --accent-green-bright: #22C55E;
   
-  /* Brand Gradient: Violet -> Purple -> Magenta */
-  --brand-violet: #6366F1;
-  --brand-purple: #A855F7;
-  --brand-magenta: #EC4899;
-  --accent-color: var(--brand-purple);
-  --accent-hover: var(--brand-magenta);
-  --accent-glow: rgba(168, 85, 247, 0.2);
+  /* Neutral Palette */
+  --bg-page: #F6FAF6;
+  --bg-card: #FFFFFF;
+  --bg-input: #F0F5F2;
+  --bg-subtle: #EAF2ED;
+  --border-color: #E2ECE7;
+  --border-focus: #1D4133;
   
-  /* Semantic Colors */
-  --color-success: #10b981;
-  --color-success-bg: rgba(16, 185, 129, 0.08);
-  --color-danger: #ef4444;
-  --color-danger-bg: rgba(239, 68, 68, 0.08);
-  --color-info: #6366F1;
+  /* Text Colors */
+  --text-main: #0F261D;
+  --text-secondary: #576E64;
+  --text-muted: #889B92;
+  --text-white: #FFFFFF;
   
-  /* Layout Shadows & Transitions */
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.7);
-  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-sans: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  /* Layout Shadows & Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 2px 8px rgba(29, 65, 51, 0.05);
+  --shadow-md: 0 8px 24px rgba(29, 65, 51, 0.08);
+  --shadow-lg: 0 16px 36px rgba(29, 65, 51, 0.12);
+  
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar for IE */
-}
-
-/* Hide scrollbar globally for Chrome/Safari */
-::-webkit-scrollbar {
-  display: none;
-  width: 0px;
-  background: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: #EBF2ED;
+  color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
-  min-height: 100svh;
-  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
-  /* Dot grid background from Kuve */
-  background-size: 24px 24px;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
 }
 
-/* Micro-animations from Kuve */
-@keyframes pulseGlow {
-  0%, 100% { 
-    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.35)); 
-  }
-  50% { 
-    filter: drop-shadow(0 0 24px rgba(236, 72, 153, 0.6)); 
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) forwards;
-}
-
-/* Main Container styled for mobile-first within Kuve canvas */
-.container {
+/* Device Shell for Responsive Simulation */
+.mobile-shell-container {
   width: 100%;
-  max-width: 460px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  max-width: 440px;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
 }
 
-/* Premium Header from Kuve */
-.app-header {
-  background: rgba(10, 10, 10, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 16px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+@media (min-width: 460px) {
+  .mobile-shell-container {
+    min-height: 880px;
+    height: 92vh;
+    margin: 20px auto;
+    border-radius: 40px;
+    border: 8px solid #1A2E26;
+  }
+}
+
+/* Top Toolbar for Screen Switching */
+.screen-switcher-bar {
+  background-color: var(--primary-forest-dark);
+  color: var(--text-white);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.75rem;
+  z-index: 10000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.screen-switcher-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.switcher-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #E2ECE7;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.switcher-btn:hover, .switcher-btn.active {
+  background: var(--accent-lime);
+  color: var(--primary-forest-dark);
+}
+
+/* iOS Status Bar Mockup */
+.ios-status-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 12px 22px 6px 22px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: transparent;
+  z-index: 999;
 }
 
-.app-logo {
+.ios-status-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 0.8rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: #fff;
-}
-
-.app-logo span {
-  color: var(--brand-purple);
-}
-
-/* Dynamic Role Switcher modeled after Kuve segment selectors */
-.role-toggle {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  padding: 3px;
-  display: flex;
-  gap: 2px;
-}
-
-.role-tab {
-  padding: 6px 14px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text-secondary);
-  transition: all 0.25s ease;
-}
-
-.role-tab.active {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-}
-
-/* Glowing Border Card component from Kuve */
-.card-glass {
-  position: relative;
-  background: linear-gradient(135deg, #0A0A0A, #121212);
-  border-radius: 12px;
-  padding: 24px;
-  z-index: 1;
-  box-shadow: var(--shadow-lg);
-}
-
-.card-glass::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  right: -1px;
-  bottom: -1px;
-  border-radius: 13px;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--brand-violet), var(--brand-purple), var(--brand-magenta));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  z-index: -1;
-  transition: opacity 0.5s ease;
-  opacity: 0.35;
-}
-
-.card-glass:hover::before {
-  opacity: 0.8;
-}
-
-/* Form Controls - Minimalist Tech Style */
-.form-group {
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: column;
   gap: 6px;
 }
 
-.form-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+/* Generic Screen Container */
+.app-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--bg-page);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Common Header Styles */
+.karry-header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-page);
+}
+
+.karry-logo-text {
+  font-weight: 800;
+  font-size: 1.75rem;
+  color: var(--primary-forest);
+  letter-spacing: -0.03em;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.karry-logo-smile {
+  height: 6px;
+  width: 38px;
+  background-color: var(--accent-lime);
+  border-radius: 0 0 10px 10px;
+  margin-top: 2px;
+  margin-left: 28px;
+}
+
+.karry-slogan {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--primary-forest);
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+
+.user-avatar-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #E2ECE7;
+  color: var(--primary-forest);
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Quick Action Grid (Home) */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 0 20px;
+  margin-bottom: 16px;
+}
+
+.quick-action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-lime);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-action-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background-color: #EBF5EF;
+  color: var(--primary-forest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action-label {
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
-.form-input {
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: var(--text-primary);
-  border-radius: 6px;
-  padding: 12px 14px;
-  font-size: 0.85rem;
-  font-family: var(--font-sans);
-  transition: var(--transition-normal);
-}
-
-.form-input:focus {
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.04);
-  border-color: var(--brand-purple);
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
-}
-
-/* Premium Buttons from Kuve */
-.btn-primary {
-  background: #0B0B0B;
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 6px;
-  padding: 14px 20px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::after {
-  content: "";
+/* Bottom Nav Bar */
+.bottom-nav-bar {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 6px;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--brand-violet), var(--brand-purple), var(--brand-magenta));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.4;
-  transition: opacity 0.3s ease;
-}
-
-.btn-primary:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(168, 85, 247, 0.2);
-}
-
-.btn-primary:hover:not(:disabled)::after {
-  opacity: 1;
-}
-
-.btn-primary:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.btn-primary:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 6px;
-  padding: 12px 20px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: var(--transition-normal);
-}
-
-.btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.btn-danger {
-  background-color: rgba(239, 68, 68, 0.05);
-  color: var(--color-danger);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-  border-radius: 6px;
-  padding: 12px 20px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: var(--transition-normal);
-}
-
-.btn-danger:hover {
-  background-color: var(--color-danger);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-
-/* Chile License Plate design - Cleaned up to match tech UI */
-.chilean-plate {
-  background-color: #161616;
-  color: #fff;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: inline-block;
-  letter-spacing: 1px;
-  font-size: 0.75rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  text-transform: uppercase;
-}
-
-/* Hologram loader for searching state */
-.pulse-loader {
-  animation: pulseGlow 4s ease-in-out infinite;
-}
-
-/* Main content flow wrapper */
-.app-main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 800px) {
-  .app-main {
-    height: calc(100vh - 64px - 33px); /* 100vh minus header and banner */
-    overflow: hidden;
-  }
-}
-
-/* Premium Desktop Split Layout & Sidebar Dashboard */
-.app-layout-grid {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  width: 100%;
-}
-/* Default mobile style for map panel to prevent collapse */
-.main-map-panel {
-  width: 100%;
-  height: 260px; /* Reduced height on mobile stacked view to be less massive */
-  position: relative;
-  background-color: #0A0A0A;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px;
-}
-
-/* Clear Leaflet default div icon styling for custom neon taxi emoji */
-.leaflet-div-icon {
-  background: transparent !important;
-  border: none !important;
-}
-
-@media (min-width: 800px) {
-  .app-layout-grid {
-    flex-direction: row;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  .sidebar-panel {
-    width: 480px; /* Slightly wider sidebar for premium reading weight */
-    flex-shrink: 0;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    overflow-y: auto;
-    background-color: rgba(10, 10, 10, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .main-map-panel {
-    flex-grow: 1;
-    height: 100%;
-    position: relative;
-    background-color: #0A0A0A;
-    border-top: none;
-    padding: 24px; /* Premium floating map container style */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-/* History Slider Drawer */
-.history-drawer {
-  position: fixed;
-  top: 0;
+  bottom: 0;
+  left: 0;
   right: 0;
-  width: 320px;
-  height: 100%;
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  background: #FFFFFF;
+  border-top: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px 0 16px 0;
   z-index: 1000;
-  transform: translateX(100%);
-  transition: transform var(--transition-normal);
-  padding: 24px;
+}
+
+.nav-item {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.history-drawer.open {
-  transform: translateX(0);
+.nav-item.active {
+  color: var(--primary-forest);
 }
 
+.nav-item.active .nav-icon-indicator {
+  width: 16px;
+  height: 3px;
+  background-color: var(--accent-green-bright);
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+/* Custom Scrollbar for inner views */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
