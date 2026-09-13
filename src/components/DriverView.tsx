@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import type { Trip } from '../types';
-import { 
-  Send, 
-  Check, 
-  AlertTriangle, 
-  MessageSquare,
-  CheckCircle,
-  Star,
-  FileText,
-  AlertCircle,
-  User,
-  Compass,
-  MapPin,
-  Target
-} from 'lucide-react';
+import { KarryLogo, KarryIsotype } from './KarryHeaderLogo';
 import { InteractiveMap } from './InteractiveMap';
+import { 
+  User, 
+  Phone, 
+  Car, 
+  Upload, 
+  CheckCircle2, 
+  ShieldCheck, 
+  MapPin, 
+  Navigation
+} from 'lucide-react';
 
 interface DriverViewProps {
   driverName: string;
@@ -44,17 +41,14 @@ export const DriverView: React.FC<DriverViewProps> = ({
   driverArrived,
   startTrip,
   completeTrip,
-  cancelTrip,
-  sendChatMessage,
 }) => {
-  // Registration States
-  const [name, setName] = useState(driverName);
-  const [phone, setPhone] = useState(driverPhone);
-  const [plate, setPlate] = useState(driverPlate);
-  const [licenseUploaded, setLicenseUploaded] = useState(false);
+  // Registration Form States
+  const [name, setName] = useState(driverName || '');
+  const [phone, setPhone] = useState(driverPhone || '');
+  const [plate, setPlate] = useState(driverPlate || '');
+  const [licenseUploaded, setLicenseUploaded] = useState(true);
 
-  // Chat Input State
-  const [chatInput, setChatInput] = useState('');
+  const [isOnline, setIsOnline] = useState(true);
 
   // Active Trip handled by THIS driver
   const activeTrip = trips.find(
@@ -62,380 +56,165 @@ export const DriverView: React.FC<DriverViewProps> = ({
     ['accepted', 'arrived', 'in_progress'].includes(t.status)
   );
 
-  // List of pending trips in Salamanca
+  // Pending trips available in Salamanca
   const pendingTrips = trips.filter(t => t.status === 'pending');
-
-  // Recommendation: The oldest pending trip is recommended to avoid waiting times
-  const recommendedTrip = pendingTrips.length > 0 ? pendingTrips[pendingTrips.length - 1] : null;
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim() && phone.trim() && plate.trim() && licenseUploaded) {
-      saveDriverProfile(name.trim(), phone.trim(), plate.trim());
+      saveDriverProfile(name.trim(), phone.trim(), plate.trim().toUpperCase());
     } else if (!licenseUploaded) {
       alert('Por favor, sube una foto de tu Licencia Clase A para continuar.');
     }
   };
 
-  const handleSendQuickMessage = (text: string) => {
-    if (activeTrip) {
-      sendChatMessage(activeTrip.id, 'driver', text);
-    }
-  };
-
-  const handleSendCustomMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (chatInput.trim() && activeTrip) {
-      sendChatMessage(activeTrip.id, 'driver', chatInput.trim());
-      setChatInput('');
-    }
-  };
-
-  // Helper to determine passenger reputation style
-  const getPassengerReputation = (pPhone: string) => {
-    if (pPhone.endsWith('9') || pPhone.endsWith('3')) {
-      return {
-        label: 'Pasajero Recurrente - Confiable',
-        badgeClass: 'var(--color-success-bg)',
-        textColor: 'var(--color-success)',
-        icon: CheckCircle
-      };
-    }
-    if (pPhone.endsWith('7') || pPhone.endsWith('4')) {
-      return {
-        label: 'Alerta: Canceló su último viaje',
-        badgeClass: 'var(--color-danger-bg)',
-        textColor: 'var(--color-danger)',
-        icon: AlertTriangle
-      };
-    }
-    return {
-      label: 'Pasajero de Salamanca',
-      badgeClass: 'var(--bg-secondary)',
-      textColor: 'var(--text-secondary)',
-      icon: User
-    };
-  };
-
-  // 1. Step 1: Registration Form
+  // 1. STEP 1: DRIVER REGISTRATION FORM (Redesigned matching Karry identity)
   if (!driverName || !driverPlate) {
     return (
-      <div className="container animate-fade-in" style={{ justifyContent: 'center', height: '100%' }}>
-        <div className="card-glass">
-          <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-            <Compass className="animate-logo-hologram" size={36} style={{ color: 'var(--brand-purple)' }} />
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#F6FAF6',
+        padding: '24px 20px',
+        overflowY: 'auto'
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <KarryLogo size="md" showSlogan={true} />
+          <KarryIsotype size={38} />
+        </div>
+
+        {/* Form Card Container */}
+        <div className="karry-card animate-fade-in" style={{ flex: 1 }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '20px',
+              backgroundColor: '#EAF5EF',
+              color: '#1D4133',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '12px'
+            }}>
+              <Car size={28} />
+            </div>
+
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: 800,
+              color: '#1D4133',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.2
+            }}>
+              Registro de Conductor
+            </h2>
+            <p style={{
+              fontSize: '0.86rem',
+              fontWeight: 500,
+              color: '#576E64',
+              marginTop: '4px'
+            }}>
+              Únete a la red oficial de transporte local de Salamanca, Chile
+            </p>
           </div>
-          <h2 style={{ marginBottom: '10px', fontSize: '1.2rem', textAlign: 'center', fontFamily: 'var(--font-mono)', letterSpacing: '1.5px' }}>
-            REGISTRO // DRIVER
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '24px', fontSize: '0.8rem', lineHeight: '1.5' }}>
-            Únete a la red de radiotaxis de Salamanca. Ingresa tus datos básicos para validación.
-          </p>
 
           <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="driver-name-input">Nombre Completo</label>
-              <input 
-                id="driver-name-input"
-                type="text" 
-                className="form-input" 
-                placeholder="Ej. Luis González" 
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="driver-phone-input">Número de Teléfono (Conductor)</label>
-              <input 
-                id="driver-phone-input"
-                type="tel" 
-                className="form-input" 
-                placeholder="Ej. +56998765432" 
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="driver-plate-input">Patente del Vehículo (Chile)</label>
-              <input 
-                id="driver-plate-input"
-                type="text" 
-                className="form-input" 
-                placeholder="Ej. AB-CD-12" 
-                value={plate}
-                onChange={e => setPlate(e.target.value)}
-                style={{ textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}
-                required
-              />
-            </div>
-
-            {/* License Upload Simulation */}
-            <div className="form-group" style={{ border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '6px', padding: '16px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.01)' }}>
-              <label htmlFor="license-file-input" style={{ cursor: 'pointer', display: 'block' }}>
-                <FileText size={20} style={{ color: 'var(--brand-purple)', margin: '0 auto 8px' }} />
-                <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>Foto de Licencia Clase A (Profesional)</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                  {licenseUploaded ? '✓ Licencia Clase A cargada' : 'Subir archivo de validación'}
-                </div>
-              </label>
-              <input 
-                id="license-file-input"
-                type="file" 
-                style={{ display: 'none' }} 
-                onChange={() => setLicenseUploaded(true)}
-              />
-            </div>
-
-            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>
-              [ SOLICITAR REGISTRO ] →
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  // 2. Step 2: Driver Approval Screen (Waiting for Admin approval)
-  if (!driverIsApproved) {
-    return (
-      <div className="container animate-fade-in" style={{ justifyContent: 'center', height: '100%' }}>
-        <div className="card-glass" style={{ textAlign: 'center' }}>
-          <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-            <Compass className="animate-logo-hologram" size={40} style={{ color: 'var(--brand-purple)' }} />
-          </div>
-          <h2 style={{ fontSize: '1.2rem', marginBottom: '8px', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }}>VALIDANDO REGISTRO</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '16px', lineHeight: '1.5' }}>
-            Hola <strong style={{ color: 'var(--text-primary)' }}>Don {driverName}</strong>, tu solicitud está en cola de revisión de la base de radiotaxis de Salamanca.
-          </p>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', padding: '12px', borderRadius: '8px', fontSize: '0.75rem', textAlign: 'left', marginBottom: '24px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-            <strong>Validación de seguridad:</strong> Se está corroborando la vigencia de tu Licencia Clase A profesional y la patente de tu auto <strong>{driverPlate}</strong>.
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
-              onClick={() => approveDriver(true)} 
-              className="btn-primary" 
-              style={{ width: '100%', backgroundColor: 'var(--color-success)', color: '#000', border: 'none' }}
-            >
-              [ APROBACIÓN INSTANTÁNEA WHATSAPP ]
-            </button>
-            <button 
-              onClick={() => {
-                localStorage.clear();
-                window.location.reload();
-              }} 
-              className="btn-secondary"
-            >
-              Cancelar y Volver
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // 3. Active Trip Panel (Trip is accepted or arrived)
-  if (activeTrip) {
-    const isArrived = activeTrip.status === 'arrived';
-    const isInProgress = activeTrip.status === 'in_progress';
-    const rep = getPassengerReputation(activeTrip.passengerPhone);
-    const RepIcon = rep.icon;
-
-    return (
-      <div className="container animate-fade-in" style={{ gap: '16px' }}>
-        {/* Active Trip Details */}
-        <div className="card-glass">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '10px' }}>
-            <div>
-              <span style={{ 
-                fontSize: '0.7rem', 
-                fontWeight: 700, 
-                textTransform: 'uppercase', 
-                padding: '3px 8px', 
-                borderRadius: '4px',
-                backgroundColor: isInProgress ? 'var(--accent-glow)' : (isArrived ? 'var(--color-success-bg)' : 'var(--accent-glow)'),
-                color: isInProgress ? 'var(--accent-color)' : (isArrived ? 'var(--color-success)' : 'var(--accent-color)'),
-                fontFamily: 'var(--font-mono)'
-              }}>
-                {isInProgress ? 'Viaje en Progreso' : (isArrived ? 'Esperando al Pasajero' : 'Viaje Aceptado')}
-              </span>
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              ID: {activeTrip.id}
-            </div>
-          </div>
-
-          {/* Passenger details with Reputation Badge */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <User size={16} style={{ color: 'var(--brand-purple)' }} />
-                <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{activeTrip.passengerName}</span>
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                {activeTrip.passengerPhone}
+            {/* Nombre Completo */}
+            <div className="karry-form-group">
+              <label className="karry-form-label">Nombre Completo</label>
+              <div className="karry-input-wrapper">
+                <User size={18} style={{ color: '#1D4133' }} />
+                <input 
+                  type="text" 
+                  className="karry-input-field" 
+                  placeholder="Ej. Luis González" 
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                />
               </div>
             </div>
-            
-            {/* Reputation alert block */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              backgroundColor: rep.badgeClass, 
-              color: rep.textColor,
-              padding: '6px 10px', 
-              borderRadius: '6px',
-              fontSize: '0.7rem',
-              fontWeight: 500
-            }}>
-              <RepIcon size={12} />
-              <span>{rep.label}</span>
-            </div>
-          </div>
 
-          {/* Active Trip Map Display */}
-          <div style={{ marginBottom: '14px', borderRadius: '8px', overflow: 'hidden' }}>
-            <InteractiveMap height="160px" showNearbyTaxis={false} />
-          </div>
-
-          {/* Route details */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8rem', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <MapPin size={14} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
-              <div><strong>Recoger en:</strong> {activeTrip.origin}</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Target size={14} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
-              <div><strong>Llevar a:</strong> {activeTrip.destination}</div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', backgroundColor: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '6px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Tarifa a Cobrar:</span>
-              <strong style={{ color: 'var(--brand-magenta)', fontSize: '0.95rem' }}>${activeTrip.price.toLocaleString('es-CL')}</strong>
-            </div>
-          </div>
-
-          {/* Action buttons for status change */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {!isArrived && !isInProgress ? (
-              <button 
-                onClick={() => driverArrived(activeTrip.id)} 
-                className="btn-primary" 
-                style={{ width: '100%', backgroundColor: 'var(--color-info)', color: '#fff', border: 'none' }}
-              >
-                <Check size={16} /> Llegué a la Ubicación (Avisar)
-              </button>
-            ) : isArrived ? (
-              <button 
-                onClick={() => startTrip(activeTrip.id)} 
-                className="btn-primary" 
-                style={{ width: '100%', backgroundColor: 'var(--accent-color)', color: '#000', border: 'none' }}
-              >
-                <Check size={16} /> Comenzar Viaje (Pasajero a bordo)
-              </button>
-            ) : (
-              <button 
-                onClick={() => completeTrip(activeTrip.id)} 
-                className="btn-primary" 
-                style={{ width: '100%', backgroundColor: 'var(--color-success)', color: '#000', border: 'none' }}
-              >
-                <CheckCircle size={16} /> Finalizar Viaje (Cobrado)
-              </button>
-            )}
-
-            {/* Inasistencia / No-Show button (Silent Flagging) */}
-            <button 
-              onClick={() => {
-                const ok = window.confirm('¿El pasajero no se presentó? Esto cancelará el viaje y marcará una advertencia de inasistencia en su número.');
-                if (ok) cancelTrip(activeTrip.id, 'driver', 'El pasajero no se presentó a la hora coordinada');
-              }} 
-              className="btn-secondary" 
-              style={{ width: '100%', borderColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-danger)' }}
-            >
-              <AlertCircle size={14} /> Pasajero no se presentó
-            </button>
-          </div>
-        </div>
-
-        {/* Chat window */}
-        <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', height: '280px', padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px', marginBottom: '8px' }}>
-            <MessageSquare size={14} style={{ color: 'var(--brand-purple)' }} />
-            <span style={{ fontWeight: 600, fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>CHAT CON EL PASAJERO "{activeTrip.passengerName}"</span>
-          </div>
-
-          {/* Messages box */}
-          <div style={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingRight: '4px' }}>
-            {activeTrip.messages.length === 0 ? (
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center', margin: 'auto' }}>
-                No hay mensajes todavía. Avísale al pasajero que vas en camino.
+            {/* Número de Teléfono */}
+            <div className="karry-form-group">
+              <label className="karry-form-label">Teléfono de Contacto</label>
+              <div className="karry-input-wrapper">
+                <Phone size={18} style={{ color: '#1D4133' }} />
+                <input 
+                  type="tel" 
+                  className="karry-input-field" 
+                  placeholder="+56 9 1234 5678" 
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  required
+                />
               </div>
-            ) : (
-              activeTrip.messages.map(m => {
-                const isMe = m.sender === 'driver';
-                return (
-                  <div 
-                    key={m.id} 
-                    style={{ 
-                      alignSelf: isMe ? 'flex-end' : 'flex-start',
-                      backgroundColor: isMe ? 'var(--brand-purple)' : 'var(--bg-tertiary)',
-                      color: isMe ? '#000' : 'var(--text-primary)',
-                      padding: '6px 10px',
-                      borderRadius: isMe ? '10px 10px 2px 10px' : '10px 10px 10px 2px',
-                      maxWidth: '85%',
-                      fontSize: '0.8rem',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <div>{m.text}</div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+            </div>
 
-          {/* Quick replies for driver */}
-          <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', padding: '4px 0', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '6px', marginBottom: '6px', flexShrink: 0 }}>
-            {['Voy en camino!', 'Estoy afuera!', 'Taco, llego en 2 min', '¿Dónde está parado exactamente?'].map((text, idx) => (
-              <button 
-                key={idx} 
-                onClick={() => handleSendQuickMessage(text)}
+            {/* Patente del Vehículo */}
+            <div className="karry-form-group">
+              <label className="karry-form-label">Patente del Vehículo</label>
+              <div className="karry-input-wrapper">
+                <Car size={18} style={{ color: '#1D4133' }} />
+                <input 
+                  type="text" 
+                  className="karry-input-field" 
+                  placeholder="Ej. XY-12-34" 
+                  value={plate}
+                  onChange={e => setPlate(e.target.value.toUpperCase())}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Licencia Clase A Upload Simulator */}
+            <div className="karry-form-group">
+              <label className="karry-form-label">Licencia Clase A (Documentación)</label>
+              <div 
+                onClick={() => setLicenseUploaded(true)}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  color: 'var(--text-secondary)',
-                  borderRadius: '12px',
-                  padding: '3px 8px',
-                  fontSize: '0.7rem',
+                  border: '2px dashed #C5D8CE',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  backgroundColor: licenseUploaded ? '#EAF5EF' : '#FFFFFF',
+                  borderColor: licenseUploaded ? '#22C55E' : '#C5D8CE',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
                   cursor: 'pointer',
-                  whiteSpace: 'nowrap'
+                  transition: 'all 0.2s ease'
                 }}
               >
-                {text}
-              </button>
-            ))}
-          </div>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: licenseUploaded ? '#22C55E' : '#EAF5EF',
+                  color: licenseUploaded ? '#FFFFFF' : '#1D4133',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {licenseUploaded ? <CheckCircle2 size={22} /> : <Upload size={20} />}
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1D4133' }}>
+                    {licenseUploaded ? 'Licencia de Conducir Adjunta ✓' : 'Subir Foto de Licencia'}
+                  </h4>
+                  <p style={{ fontSize: '0.76rem', color: '#576E64' }}>
+                    {licenseUploaded ? 'Clase A autorizada para radiotaxis y transporte' : 'Toca para cargar documento oficial'}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-          {/* Custom chat form */}
-          <form onSubmit={handleSendCustomMessage} style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder="Enviar mensaje..." 
-              value={chatInput}
-              onChange={e => setChatInput(e.target.value)}
-              style={{ flexGrow: 1, padding: '6px 10px', fontSize: '0.8rem', borderRadius: '6px' }}
-            />
-            <button 
-              type="submit" 
-              className="btn-primary" 
-              style={{ padding: '6px 10px', borderRadius: '6px' }}
-            >
-              <Send size={12} />
+            {/* Submit Button */}
+            <button type="submit" className="karry-primary-btn" style={{ marginTop: '8px' }}>
+              Solicitar Registro como Conductor
             </button>
           </form>
         </div>
@@ -443,141 +222,353 @@ export const DriverView: React.FC<DriverViewProps> = ({
     );
   }
 
-  // 4. Driver Dashboard (Trips queue view)
-  return (
-    <div className="container animate-fade-in" style={{ gap: '16px' }}>
-      {/* Hello stats header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '12px' }}>
-        <div>
-          <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>SESIÓN: DRIVER</span>
-          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Don {driverName}</div>
+  // 2. STEP 2: PENDING APPROVAL SCREEN
+  if (!driverIsApproved) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#F6FAF6',
+        padding: '24px 20px',
+        overflowY: 'auto'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <KarryLogo size="md" showSlogan={true} />
+          <KarryIsotype size={38} />
         </div>
-        <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem', alignItems: 'center' }}>
-          <div className="chilean-plate">{driverPlate}</div>
-          <span style={{ color: 'var(--brand-purple)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '2px' }}>
-            <Star size={12} fill="var(--brand-purple)" /> 4.9
-          </span>
-        </div>
-      </div>
 
-      {/* Recommended Trip Card */}
-      {recommendedTrip ? (
-        <div className="card-glass animate-fade-in" style={{ border: '1px solid var(--brand-purple)', boxShadow: '0 0 15px rgba(168, 85, 247, 0.15)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ 
-              fontSize: '0.65rem', 
-              fontWeight: 700, 
-              backgroundColor: 'var(--accent-glow)', 
-              color: 'var(--brand-purple)',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              fontFamily: 'var(--font-mono)'
-            }}>
-              RECOMENDADO
-            </span>
-            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>SISTEMA ACTIVO</span>
+        <div className="karry-card animate-fade-in" style={{ textAlign: 'center', padding: '32px 24px' }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            backgroundColor: '#FEF3C7',
+            color: '#D97706',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <ShieldCheck size={36} />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
-              <User size={14} style={{ color: 'var(--brand-purple)' }} />
-              <span>{recommendedTrip.passengerName}</span>
-              <span style={{ fontSize: '0.65rem', backgroundColor: 'var(--color-success-bg)', color: 'var(--color-success)', padding: '2px 4px', borderRadius: '4px' }}>Confiable</span>
-            </div>
-            <strong style={{ color: 'var(--brand-magenta)', fontSize: '1rem' }}>
-              ${recommendedTrip.price.toLocaleString('es-CL')}
-            </strong>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1D4133' }}>
+            Solicitud en Revisión
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: '#576E64', marginTop: '6px', marginBottom: '24px', lineHeight: 1.4 }}>
+            Hola <strong>{driverName}</strong>, tus antecedentes están siendo validados para operar en la comuna de Salamanca.
+          </p>
+
+          <div style={{
+            backgroundColor: '#F6FAF6',
+            borderRadius: '16px',
+            padding: '16px',
+            textAlign: 'left',
+            marginBottom: '24px',
+            border: '1px solid #E2ECE7'
+          }}>
+            <p style={{ fontSize: '0.82rem', color: '#576E64', marginBottom: '4px' }}>
+              <strong>Conductor:</strong> {driverName}
+            </p>
+            <p style={{ fontSize: '0.82rem', color: '#576E64', marginBottom: '4px' }}>
+              <strong>Patente:</strong> {driverPlate}
+            </p>
+            <p style={{ fontSize: '0.82rem', color: '#576E64' }}>
+              <strong>Teléfono:</strong> {driverPhone}
+            </p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', marginBottom: '16px', color: 'var(--text-secondary)' }}>
-            <div style={{ display: 'flex', gap: '6px' }}><MapPin size={12} style={{ color: 'var(--color-success)' }} /> <span><strong>De:</strong> {recommendedTrip.origin}</span></div>
-            <div style={{ display: 'flex', gap: '6px' }}><Target size={12} style={{ color: 'var(--color-danger)' }} /> <span><strong>A:</strong> {recommendedTrip.destination}</span></div>
-          </div>
-
+          {/* Admin Simulator Approval Button */}
           <button 
-            onClick={() => acceptTrip(recommendedTrip.id)} 
-            className="btn-primary" 
-            style={{ width: '100%', padding: '12px' }}
+            onClick={() => approveDriver(true)}
+            className="karry-primary-btn"
+            style={{ backgroundColor: '#1D4133' }}
           >
-            [ ACEPTAR VIAJE ] →
+            Aprobar Conductor (Simulación Admin)
           </button>
         </div>
-      ) : (
-        <div className="card-glass" style={{ textAlign: 'center', padding: '30px 0' }}>
-          <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-            <Compass className="pulse-loader" size={32} style={{ color: 'var(--brand-purple)' }} />
-          </div>
-          <h3 style={{ fontSize: '0.9rem', marginBottom: '4px', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }}>BUSCANDO VIAJES</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', lineHeight: '1.4' }}>
-            Mantén esta página abierta. Sonará una bocina apenas un vecino de Salamanca solicite un radiotaxi.
-          </p>
-        </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Available Trips List */}
-      <div>
-        <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '10px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>
-          OTROS VIAJES EN COLA ({pendingTrips.length})
-        </h3>
-        {pendingTrips.length === 0 ? (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', padding: '16px', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-            No hay otros viajes pendientes en este momento.
+  // 3. STEP 3: ACTIVE DRIVER DASHBOARD
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: '#F6FAF6',
+      position: 'relative',
+      overflowY: 'auto'
+    }}>
+      {/* Top Driver Header Bar */}
+      <div style={{
+        padding: '16px 20px',
+        backgroundColor: '#1D4133',
+        color: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            backgroundColor: '#8EDF6F',
+            color: '#1D4133',
+            fontSize: '1.1rem',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            {driverName.substring(0, 2).toUpperCase()}
           </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {pendingTrips.map(t => {
-              if (recommendedTrip && t.id === recommendedTrip.id) return null;
-              return (
-                <div 
-                  key={t.id} 
-                  className="card-glass animate-fade-in" 
-                  style={{ 
-                    padding: '16px', 
-                    backgroundColor: 'var(--bg-secondary)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: '12px'
-                  }}
-                >
-                  <div style={{ flexGrow: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <strong style={{ fontSize: '0.8rem' }}>{t.passengerName}</strong>
-                      <span style={{ color: 'var(--brand-magenta)', fontWeight: 600, fontSize: '0.8rem' }}>
-                        ${t.price.toLocaleString('es-CL')}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <div>De: {t.origin}</div>
-                      <div>A: {t.destination}</div>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => acceptTrip(t.id)} 
-                    className="btn-primary" 
-                    style={{ padding: '8px 12px', fontSize: '0.7rem', borderRadius: '6px' }}
-                  >
-                    Aceptar
-                  </button>
-                </div>
-              );
-            })}
+          <div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1 }}>
+              {driverName}
+            </h3>
+            <span style={{ fontSize: '0.75rem', color: '#8EDF6F', fontWeight: 600 }}>
+              Patente: {driverPlate}
+            </span>
           </div>
-        )}
+        </div>
+
+        {/* Online Toggle Switch */}
+        <button 
+          onClick={() => setIsOnline(!isOnline)}
+          style={{
+            backgroundColor: isOnline ? '#22C55E' : 'rgba(255,255,255,0.2)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '20px',
+            padding: '6px 14px',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FFFFFF' }} />
+          {isOnline ? 'EN LÍNEA' : 'OFFLINE'}
+        </button>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-        <button 
-          onClick={() => {
-            if (window.confirm('¿Quieres cerrar sesión de conductor?')) {
-              localStorage.clear();
-              window.location.reload();
-            }
-          }}
-          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.7rem', cursor: 'pointer', textDecoration: 'underline' }}
-        >
-          Cerrar sesión de conductor
-        </button>
+      {/* Driver Daily Earnings Summary */}
+      <div style={{
+        backgroundColor: '#143026',
+        padding: '12px 20px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '8px',
+        textAlign: 'center',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        color: '#FFFFFF'
+      }}>
+        <div>
+          <span style={{ fontSize: '0.68rem', color: '#A0B8AD', display: 'block' }}>GANADO HOY</span>
+          <strong style={{ fontSize: '0.98rem', color: '#8EDF6F' }}>CLP 42.500</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '0.68rem', color: '#A0B8AD', display: 'block' }}>VIAJES</span>
+          <strong style={{ fontSize: '0.98rem' }}>8</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '0.68rem', color: '#A0B8AD', display: 'block' }}>CALIFICACIÓN</span>
+          <strong style={{ fontSize: '0.98rem', color: '#F59E0B' }}>⭐ 4.9</strong>
+        </div>
+      </div>
+
+      {/* Main Driver Content Area */}
+      <div style={{ flex: 1, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Active Trip Mode */}
+        {activeTrip ? (
+          <div className="karry-card animate-fade-in" style={{ border: '2px solid #22C55E' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '14px',
+              paddingBottom: '10px',
+              borderBottom: '1px solid #E2ECE7'
+            }}>
+              <span style={{
+                backgroundColor: '#22C55E',
+                color: '#FFFFFF',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                padding: '4px 10px',
+                borderRadius: '12px',
+                textTransform: 'uppercase'
+              }}>
+                {activeTrip.status === 'accepted' && 'En camino al pasajero'}
+                {activeTrip.status === 'arrived' && 'Llegaste al punto de recogida'}
+                {activeTrip.status === 'in_progress' && 'Viaje en curso a destino'}
+              </span>
+
+              <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1D4133' }}>
+                CLP {activeTrip.price.toLocaleString('es-CL')}
+              </span>
+            </div>
+
+            {/* Trip Details */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <MapPin size={18} style={{ color: '#1D4133' }} />
+                <div>
+                  <span style={{ fontSize: '0.72rem', color: '#889B92', display: 'block' }}>ORIGEN</span>
+                  <strong style={{ fontSize: '0.92rem', color: '#1D4133' }}>{activeTrip.origin}</strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Navigation size={18} style={{ color: '#22C55E' }} />
+                <div>
+                  <span style={{ fontSize: '0.72rem', color: '#889B92', display: 'block' }}>DESTINO</span>
+                  <strong style={{ fontSize: '0.92rem', color: '#1D4133' }}>{activeTrip.destination}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Passenger Info */}
+            <div style={{
+              backgroundColor: '#F6FAF6',
+              borderRadius: '14px',
+              padding: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  backgroundColor: '#1D4133',
+                  color: '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {activeTrip.passengerName.substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1D4133' }}>
+                    {activeTrip.passengerName}
+                  </h4>
+                  <span style={{ fontSize: '0.74rem', color: '#576E64' }}>
+                    {activeTrip.passengerPhone}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Workflow Action Buttons */}
+            {activeTrip.status === 'accepted' && (
+              <button 
+                onClick={() => driverArrived(activeTrip.id)}
+                className="karry-primary-btn"
+              >
+                ¡Llegué al lugar de origen!
+              </button>
+            )}
+
+            {activeTrip.status === 'arrived' && (
+              <button 
+                onClick={() => startTrip(activeTrip.id)}
+                className="karry-primary-btn"
+                style={{ backgroundColor: '#1D4133' }}
+              >
+                Iniciar Viaje con Pasajero
+              </button>
+            )}
+
+            {activeTrip.status === 'in_progress' && (
+              <button 
+                onClick={() => completeTrip(activeTrip.id)}
+                className="karry-primary-btn"
+                style={{ backgroundColor: '#22C55E' }}
+              >
+                Finalizar Viaje y Cobrar CLP {activeTrip.price.toLocaleString('es-CL')}
+              </button>
+            )}
+          </div>
+        ) : (
+          /* Available Pending Trips List */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1D4133' }}>
+              Solicitudes de Viaje en Salamanca ({pendingTrips.length})
+            </h3>
+
+            {pendingTrips.length === 0 ? (
+              <div className="karry-card" style={{ textAlign: 'center', padding: '32px 20px' }}>
+                <p style={{ color: '#576E64', fontSize: '0.9rem' }}>
+                  No hay solicitudes de viajes pendientes en Salamanca en este momento.
+                </p>
+                <p style={{ color: '#889B92', fontSize: '0.78rem', marginTop: '6px' }}>
+                  Mantén la app abierta. Te avisaremos cuando un vecino solicite un viaje.
+                </p>
+              </div>
+            ) : (
+              pendingTrips.map(trip => (
+                <div key={trip.id} className="karry-card animate-fade-in" style={{ padding: '18px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <div>
+                      <span style={{
+                        backgroundColor: '#EAF5EF',
+                        color: '#1D4133',
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
+                        padding: '3px 8px',
+                        borderRadius: '8px',
+                        textTransform: 'uppercase'
+                      }}>
+                        NUEVA SOLICITUD
+                      </span>
+                      <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1D4133', marginTop: '6px' }}>
+                        {trip.passengerName}
+                      </h4>
+                    </div>
+
+                    <strong style={{ fontSize: '1.2rem', color: '#22C55E', fontWeight: 800 }}>
+                      CLP {trip.price.toLocaleString('es-CL')}
+                    </strong>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                    <p style={{ fontSize: '0.84rem', color: '#576E64' }}>
+                      📍 <strong>Origen:</strong> {trip.origin}
+                    </p>
+                    <p style={{ fontSize: '0.84rem', color: '#576E64' }}>
+                      🏁 <strong>Destino:</strong> {trip.destination}
+                    </p>
+                  </div>
+
+                  <button 
+                    onClick={() => acceptTrip(trip.id)}
+                    className="karry-primary-btn"
+                  >
+                    Aceptar Viaje
+                  </button>
+                </div>
+              ))
+            )}
+
+            {/* Salamanca Interactive Map */}
+            <div style={{ height: '220px', marginTop: '8px' }}>
+              <InteractiveMap height="100%" showNearbyTaxis={true} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

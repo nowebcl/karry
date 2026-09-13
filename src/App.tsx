@@ -83,7 +83,7 @@ export default function App() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      paddingBottom: '40px'
+      paddingBottom: '30px'
     }}>
       {/* Top Main Bar for Demo Presentation */}
       <header style={{
@@ -116,7 +116,7 @@ export default function App() {
               Karry <span style={{ color: '#8EDF6F', fontSize: '0.85rem', fontWeight: 600 }}>Salamanca</span>
             </h1>
             <p style={{ fontSize: '0.72rem', color: '#A0B8AD', margin: 0 }}>
-              Sistema de Identidad & UI/UX (Referencia image_0 a image_5)
+              Web App de Transporte Local (Salamanca, Chile)
             </p>
           </div>
         </div>
@@ -136,9 +136,9 @@ export default function App() {
                 backgroundColor: role === 'passenger' ? '#8EDF6F' : 'transparent',
                 color: role === 'passenger' ? '#1D4133' : '#A0B8AD',
                 border: 'none',
-                padding: '5px 12px',
+                padding: '6px 14px',
                 borderRadius: '16px',
-                fontSize: '0.76rem',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
@@ -152,9 +152,9 @@ export default function App() {
                 backgroundColor: role === 'driver' ? '#8EDF6F' : 'transparent',
                 color: role === 'driver' ? '#1D4133' : '#A0B8AD',
                 border: 'none',
-                padding: '5px 12px',
+                padding: '6px 14px',
                 borderRadius: '16px',
-                fontSize: '0.76rem',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
@@ -171,8 +171,8 @@ export default function App() {
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '50%',
-              width: '32px',
-              height: '32px',
+              width: '34px',
+              height: '34px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -180,44 +180,44 @@ export default function App() {
             }}
             title="Reiniciar Demo"
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={16} />
           </button>
         </div>
       </header>
 
-      {/* Screen Switcher Toolbar for Direct Reference Testing */}
+      {/* Screen Switcher Toolbar for Passenger Mode */}
       {role === 'passenger' && (
-        <div className="screen-switcher-bar" style={{ width: '100%', maxWidth: '440px' }}>
-          <span style={{ color: '#8EDF6F', fontWeight: 700, fontSize: '0.72rem' }}>
-            Vistas UI:
+        <div className="screen-switcher-bar" style={{ width: '100%', maxWidth: '540px' }}>
+          <span style={{ color: '#8EDF6F', fontWeight: 700, fontSize: '0.74rem' }}>
+            Vistas Demo:
           </span>
           
           <button 
             className={`switcher-btn ${currentScreen === 'splash' ? 'active' : ''}`}
             onClick={() => setCurrentScreen('splash')}
           >
-            1. Splash (image_0)
+            1. Splash
           </button>
 
           <button 
             className={`switcher-btn ${currentScreen === 'home' ? 'active' : ''}`}
             onClick={() => setCurrentScreen('home')}
           >
-            2. Home (image_1)
+            2. Home
           </button>
 
           <button 
             className={`switcher-btn ${currentScreen === 'planning' ? 'active' : ''}`}
             onClick={() => setCurrentScreen('planning')}
           >
-            3. Planifica (image_2)
+            3. Planifica
           </button>
 
           <button 
             className={`switcher-btn ${currentScreen === 'vehicle' ? 'active' : ''}`}
             onClick={() => setCurrentScreen('vehicle')}
           >
-            4. Elige (image_3)
+            4. Elige
           </button>
 
           <button 
@@ -229,19 +229,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Mobile Shell Frame */}
-      <div className="mobile-shell-container">
-        {/* iOS Status Bar */}
-        <div className="ios-status-bar">
-          <span>9:41</span>
-          <div className="ios-status-icons">
-            <span>📶</span>
-            <span>📡</span>
-            <span>🔋</span>
-          </div>
-        </div>
-
-        {/* Screen View Router */}
+      {/* Clean Full Web App Frame */}
+      <div className="web-app-container">
         {role === 'passenger' ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
             {currentScreen === 'splash' && (
@@ -312,18 +301,18 @@ export default function App() {
 
       {/* Footer Info */}
       <footer style={{
-        marginTop: '20px',
+        marginTop: '16px',
         textAlign: 'center',
         fontSize: '0.78rem',
         color: '#A0B8AD',
-        maxWidth: '440px',
+        maxWidth: '540px',
         padding: '0 16px'
       }}>
         <p style={{ fontWeight: 600, color: '#8EDF6F', marginBottom: '4px' }}>
-          App Karry Salamanca · Versión 0.1
+          Plataforma Karry Salamanca · Versión 0.2
         </p>
         <p>
-          Basado en la paleta oficial (#1D4133 Verde Bosque, #8EDF6F Verde Lima) e iconografía de Salamanca, Chile.
+          #1D4133 Verde Bosque · #8EDF6F Verde Lima · Red de Transporte Local
         </p>
       </footer>
     </div>
